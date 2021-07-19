@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<head>
+    <title>O2+RousseRoberto</title>
+</head>
+
+<body>
+    <script type="text/javascript" src="https://unpkg.com/rxjs@%5E7/dist/bundles/rxjs.umd.min.js"></script>
+
+
+    <input name="entrada" />
+    <span id="valores"></span>
+
+    <script>
+        const { fromEvent, operators: { map } } = rxjs;
+
+        const entrada = document.querySelector('input');
+        const reporte = document.getElementById('valores');
+
+        const source = fromEvent(entrada, 'input')
+            .pipe(
+                map((e) => { return e.target.value })
+            )
+
+        const subs = source.subscribe(
+            (val) => {
+                valores.textContent = val.split('').reverse('').join('')
+                setTimeout(() => {
+                    limpia('Se desuscribe porque transcurrieron 30 segundos', subs)
+                }, 30000)
+                if (val == 'error') { limpia('Desuscripcion por reporte de Error', subs) }
+                else if (val == 'complete') { limpia('Desuscripcion por reporte de Operacion Completa', subs) }
+            })
+
+        function limpia(mensaje, sub) {
+            entrada.disabled = true
+            entrada.value = ''
+            valores.textContent = ''
+            console.log(mensaje)
+            sub.unsubscribe()
+        }
+
+    </script>
+</body>

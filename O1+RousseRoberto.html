@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<head>
+    <title>O1+RousseRoberto</title>
+</head>
+
+<body>
+    <script type="text/javascript" src="https://unpkg.com/rxjs@%5E7/dist/bundles/rxjs.umd.min.js"></script>
+
+
+    <input name="entrada" />
+    <span id="valores"></span>
+
+    <script>
+        const { Observable } = rxjs;
+
+        const entrada = document.querySelector('input');
+        const reporte = document.getElementById('valores');
+
+        entrada.addEventListener('input', reversor);
+
+        function limpia(mensaje, sub) {
+            entrada.disabled = true
+            entrada.value = ''
+            reporte.textContent = ''
+            console.log(mensaje)
+            sub.unsubscribe()
+        }
+
+        function reversor(e) {
+            let mensaje = e.target.value
+            let observaInput = new Observable((onSubscribe) => {
+                if (mensaje == 'error') { onSubscribe.error() }
+                if (mensaje == 'complete') { onSubscribe.complete() }
+                else { onSubscribe.next() }
+            })
+            return subscripcion = observaInput.subscribe({
+                next: () => {
+                    reporte.textContent = mensaje.split('').reverse().join('')
+                    setTimeout(() => {
+                        limpia('Se desuscribe porque transcurrieron 30 segundos', subscripcion)
+                    }, 30000)
+                },
+                error: () => {
+                    limpia('Desuscripcion por reporte de Error', subscripcion)
+                },
+                complete: () => {
+                    limpia('Desuscripcion por reporte de Operacion Completa ', subscripcion)
+                }
+            })
+
+        }
+    </script>
+</body>
